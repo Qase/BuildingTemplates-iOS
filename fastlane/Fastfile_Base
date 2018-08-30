@@ -100,7 +100,7 @@ platform :ios do
     version = get_info_plist_value(key: "CFBundleShortVersionString")
     version_bundle = get_info_plist_value(key: "CFBundleVersion")
     commits = number_of_commits()
-    dir  = sh("dir")
+    dir  = sh("pwd")
 
     if ENV["XCODE_SCHEME"]
       puts "sdfasdfasfasdfasfasfasdfasd"  
