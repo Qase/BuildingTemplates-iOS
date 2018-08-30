@@ -100,12 +100,14 @@ platform :ios do
     version = get_info_plist_value(key: "CFBundleShortVersionString")
     version_bundle = get_info_plist_value(key: "CFBundleVersion")
     commits = number_of_commits()
+    dir  = sh("dir")
 
     if ENV["XCODE_SCHEME"]
       puts "sdfasdfasfasdfasfasfasdfasd"  
     end
   
     UI.important "Project Data:"
+    puts "Building dir:       \t #{dir}"
     puts "App version:   \t #{version}"
     puts "Bundle version:\t #{version_bundle}"
     puts "Commits:       \t #{commits}"
