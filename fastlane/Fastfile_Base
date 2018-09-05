@@ -18,7 +18,6 @@ require 'dotenv/load'
 # Update this, if you use features of a newer version
 fastlane_version "2.100.0"
 default_platform :ios
-
 # If you want to automatically update fastlane if a new version is available:
 # update_fastlane
 
@@ -37,6 +36,8 @@ platform :ios do
     #   unlock_keychain
       version_set()
     end
+    unlock_default_keychain()
+    refresh_profiles(readonly:true)
   end
 
   # -------------------------
@@ -73,6 +74,28 @@ platform :ios do
   # Certificates
   # -------------------------
 
+  lane :create_default_keychain do |options|
+    create_keychain(
+      default_keychain: false,
+      unlock: true,
+      timeout: false,
+      lock_when_sleeps: false
+    )
+  end
+
+  lane :unlock_default_keychain do |options|
+    begin
+      unlock_keychain()
+    rescue
+      create_keychain()
+    end
+  end
+
+  lane :delete_default_keychain do |options|
+    delete_keychain( # If the keychain file is located in the standard location `~/Library/Keychains`, then it is sufficient to provide the keychain file name, or file name with its suffix.
+    )
+  end
+
   desc "Update certificates (readonly): scheme:{development, appstore, adhoc}"
   lane :certificates do |options|
     match(
@@ -83,11 +106,12 @@ platform :ios do
   end
 
   desc "Update certificates for all schemes (development, appstore, adhoc)"
-  lane :refresh_profiles do
+  lane :refresh_profiles do |options|
     ["development", "adhoc", "appstore"].each do |type|
       match(
         type: type,
-        force_for_new_devices: true
+        readonly: options[:readonly],
+        force_for_new_devices: !options[:readonly]
       )
     end
   end
@@ -101,13 +125,9 @@ platform :ios do
     version_bundle = get_info_plist_value(key: "CFBundleVersion")
     commits = number_of_commits()
     dir  = sh("pwd")
-
-    if ENV["XCODE_SCHEME"]
-      puts "sdfasdfasfasdfasfasfasdfasd"  
-    end
   
     UI.important "Project Data:"
-    puts "Building dir:       \t #{dir}"
+    puts "Building dir:  \t #{dir}"
     puts "App version:   \t #{version}"
     puts "Bundle version:\t #{version_bundle}"
     puts "Commits:       \t #{commits}"
@@ -129,6 +149,10 @@ platform :ios do
 
   #Override this lane if needed (In case entire build action needs to be changed)
   private_lane :custom_gym do |options|
+
+    if is_ci?
+      clean()
+    end
     provisioningProfiles = get_provisioning_profiles(options)
     gym(
       export_method: options[:xcode_export_method],
@@ -166,7 +190,7 @@ platform :ios do
 
 
   desc "Only build a project"
-  lane :run_build do
+  lane :build_only do
     gym(
       skip_package_ipa: true,
       include_symbols: false,
@@ -260,21 +284,21 @@ platform :ios do
 
   desc "CI - Build and upload to crashlytics"
   lane :ci_crashlytics do
-    certificates(scheme: "adhoc")
+    #certificates(scheme: "adhoc")
     build(scheme: "adhoc")
     deploy_crashlytics()
   end
 
   desc "CI - Build and upload to testflight"
   lane :ci_testflight do
-    certificates(scheme: "appstore")
+    #certificates(scheme: "appstore")
     build(scheme: "appstore")
     deploy_pilot()
   end
 
   desc "CI - Build and upload to testflight"
   lane :ci_appstore do
-    certificates(scheme: "appstore")
+    #certificates(scheme: "appstore")
     build(scheme: "appstore")
     deploy_appstore()
   end
