@@ -210,7 +210,7 @@ platform :ios do
     crashlytics(
       notes: "Application succesfully uploaded to crashlytics \n" + %x[git log --oneline --since `date -v -1d +%d.%m.%Y`]
     )
-    post_deploy_to_slack(place: prefix + "Crashlytics")
+    post_deploy_to_slack(place: "Crashlytics")
 
   end
 
