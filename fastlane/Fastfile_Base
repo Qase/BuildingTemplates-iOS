@@ -37,7 +37,9 @@ platform :ios do
       version_set()
     end
     unlock_default_keychain()
-    refresh_profiles(readonly:true)
+    if ENV["AUTO_REFRESH_PROFILE"]
+      refresh_profiles(readonly:true)
+    end
   end
 
   # -------------------------
