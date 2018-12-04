@@ -66,9 +66,18 @@ platform :ios do
   # -------------------------
   desc "Clean all files before build (deletes derived data)"
   lane :version_set do |options|
-    increment_build_number_in_plist(build_number: "#{number_of_commits()}")
-
-    #increment_version_number(bump_type: "major", version_number: "1.1.0")
+    branch = git_branch()
+    if ['master', 'dev', 'develop'].include? branch.downcase
+      branch = ""
+    elsif branch.downcase.include? "release"
+      branch = ""
+    end
+      
+    build_number = "#{number_of_commits()}"
+    if branch != ""
+      build_number += "(#{branch})"
+    end
+    increment_build_number_in_plist(build_number: "#{build_number}")
   end
 
 
