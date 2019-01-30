@@ -58,6 +58,77 @@ Basic iOS templates to easy integrate and run fastlate at your iOS project.
 | APP_NAME_SHORT           | String | Your own name of application                                                      |
 
 ## Example
+#### Fastfile example
+
+```
+import_from_git(
+  url: "https://github.com/Qase/BuildingTemplates-iOS.git", # The URL of the repository to import the Fastfile from.
+  branch: "HEAD", # The branch to checkout on the repository
+  path: "fastlane/Fastfile_Base", # The path of the Fastfile in the repository
+)
+```
+
+#### .env.default example
+```
+#General
+TEAM_ID = "123456789"
+APP_IDENTIFIER = "com.quanti.swift.myappidentifier"
+IPA = "myapp.ipa"
+BUILD_DIR = "./build"
+PLIST_PATH = "py-app/Info.plist"
+IPA_PATH = "${BUILD_DIR}/${IPA}"
+APP_NAME = "MyApp"
+APP_NAME_SHORT = "MA"
+XCODE_SCHEME = "My App"
+
+FASTLANE_ITC_TEAM_ID = "${TEAM_ID}"
+
+#Keychain
+KEYCHAIN_NAME = "fastlane"
+KEYCHAIN_PASSWORD = "password"
+
+MATCH_KEYCHAIN_NAME = "${KEYCHAIN_NAME}"
+MATCH_KEYCHAIN_PASSWORD = "${KEYCHAIN_PASSWORD}"
+MATCH_PASSWORD = "password"
+
+FL_UNLOCK_KEYCHAIN_PASSWORD = "${KEYCHAIN_PASSWORD}"
+FL_UNLOCK_KEYCHAIN_PATH = "${KEYCHAIN_NAME}"
+
+#Fastlane
+FASTLANE_SKIP_UPDATE_CHECK = true
+
+#Slack
+SLACK_URL = "https://hooks.slack.com/services/123456789"
+
+#Match
+MATCH_APP_IDENTIFIER = ${APP_IDENTIFIER}
+MATCH_GIT_URL = "git@git.quanti.cz:git/fastlane-match-ios.git"
+MATCH_USERNAME = "username@quanti.cz"
+#AUTO_REFRESH_PROFILE = true
+
+#Crashlytics
+CRASHLYTICS_FRAMEWORK_PATH = "./Frameworks/Crashlytics.framework"
+CRASHLYTICS_API_TOKEN = "123456"
+CRASHLYTICS_BUILD_SECRET = "123456789"
+CRASHLYTICS_IPA_PATH = "${IPA_PATH}"
+CRASHLYTICS_GROUPS = "ios-testers"
+
+#Gym
+GYM_OUTPUT_DIRECTORY = "${BUILD_DIR}"
+GYM_CLEAN = true
+
+#Scan
+SCAN_SCHEME = "${XCODE_SCHEME}"
+
+#Deliver
+DELIVER_TEAM_ID = "${TEAM_ID}"
+DELIVER_IPA_PATH = "${IPA_PATH}"
+
+#Get Info
+FL_GET_INFO_PLIST_PATH = ${PLIST_PATH}
+FL_NUMBER_OF_COMMITS_ALL = false
+FL_VERSION_NUMBER_SCHEME = ${XCODE_SCHEME}
+```
 
 ## License
 [MIT](https://github.com/nishanths/license/blob/master/LICENSE)
