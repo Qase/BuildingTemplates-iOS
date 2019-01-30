@@ -21,10 +21,7 @@ Basic iOS templates to easy integrate and run fastlate at your iOS project.
 | **General** | clean | Clean all files before build (deletes derived data) |  |  |
 |  | register | Register new development device to provisioning profile (prompts name and UUID) |  |  |
 | **Version control** | version_set | Clean all files before build (deletes derived data) |  |  |
-| **Certificates** | create_default_keychain | ????? |  |  |
-|  | unlock_default_keychain |  |  |  |
-|  | delete_default_keychain |  |  |  |
-|  | certificates | Update certificates (readonly) | scheme | development, appstore, adhoc |
+| **Certificates** | certificates | Update certificates (readonly) | scheme | development, appstore, adhoc |
 |  | refresh_profiles | Update certificates for all schemes (development, appstore, adhoc) | readonly | boolean |
 | **Informational** | info | Prints information (like version ...) about project |  |  |
 | **Application building** | build | Build application | scheme | development, appstore, adhoc |
