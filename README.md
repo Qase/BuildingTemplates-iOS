@@ -1,5 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Maintainer: luba](https://img.shields.io/badge/Maintainer-David-blue.svg)](mailto:david.nemec@quanti.cz)
+[![Maintainer: luba](https://img.shields.io/badge/Maintainer-David2XN-blue.svg)](mailto:david.nemec@quanti.cz)
 [![Qase: KotlinLogger](https://img.shields.io/badge/Qase-BuildingTemplates-ff69b4.svg)](https://github.com/Qase/BuildingTemplates-iOS)
 
 ## BuildingTemplates-iOS
