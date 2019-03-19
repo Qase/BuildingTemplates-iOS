@@ -212,6 +212,65 @@ platform :ios do
   # -------------------------
   # Deploying
   # -------------------------
+  
+  desc "Setup Apple Two-factor Auth"
+  lane :setup_apple_login do |options|
+
+    if prompt(text: "Delete local fastlane credentials", boolean: true)
+      rm = `rm -rf ~/.fastlane/spaceship/`
+    end
+
+    change_user = prompt(text: "Use following login username (" + ENV["MATCH_USERNAME"] + ")", boolean: true)
+    if change_user
+      username = ENV["MATCH_USERNAME"]
+    else 
+      username =  prompt(text: "Enter new username")
+    end
+
+    set_app_pass = prompt(text: "Setup new App password? (" + ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"] + ")", boolean: true)
+    new_app_pass = ""
+    if set_app_pass
+      new_app_pass = prompt(text: "Enter new App password? (https://appleid.apple.com/#!&page=signin)")
+    end
+
+    output = []
+    IO.popen("fastlane spaceauth -u " + username ).each do |line|
+      puts line
+      output << line.chomp
+    end
+
+    tokenString = output.join("\n").match(/Pass the following via the FASTLANE_SESSION environment variable:\n(^.*)/i).captures.join('###').gsub('[4m[36m', '').gsub('[0m[0m', '')
+    #puts "XXXX"+tokenString + "YYYY"
+    #puts "DIR: " + `pwd`
+
+    file_name = ".env.default"
+    text = File.read(file_name)
+    new_contents = text.gsub(/.*FASTLANE_SESSION.*\n/, "FASTLANE_SESSION = \"" + tokenString + "\"\n" )
+
+    if change_user
+      new_contents = new_contents.gsub(/.*MATCH_USERNAME.*\n/, "MATCH_USERNAME = \"" + username + "\"\n" )
+    end
+
+    if set_app_pass
+        new_contents = new_contents.gsub(/.*FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD.*\n/, "FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD = \"" + new_app_pass + "\"\n" )
+    end
+
+    File.open(file_name, "w") {|file| file.puts new_contents }
+
+
+    if prompt(text: "Commit changes in " + file_name + "?", boolean: true)
+      git_commit(path: ["./fastlane/"+file_name], message: "GIT: Updated Apple login authorization")
+      if prompt(text: "Push changes?", boolean: true)
+        push_to_git_remote()
+      end
+    end
+
+    #puts `fastlane spaceauth -u david2xn@gmail.com`
+    #tokenString = sh("fastlane spaceauth -u "+ENV["MATCH_USERNAME"]).match(/Pass the following via the FASTLANE_SESSION environment variable:\n(^.*)/i).captures.join('###')
+    #beforeStringLine = 'ENV["FASYLANE_SESSION"] = \''+ tokenString + '\''
+    #puts "XXXX"+tokenString + "YYYY"
+  end
+  
   desc "Deploy application to crashlytics"
   lane :deploy_crashlytics do |options|
     if ENV["SUPRESS_DEPLOY"]
