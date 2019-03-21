@@ -58,7 +58,9 @@ platform :ios do
       device_hash = {}
       device_hash[device_name] = device_udid
       register_devices(devices: device_hash)
-    refresh_profiles
+      if !options[:norefresh]
+        refresh_profiles
+      end
   end
 
   # -------------------------
