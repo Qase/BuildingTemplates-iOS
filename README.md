@@ -57,7 +57,7 @@ Basic iOS templates to easy integrate and run fastlate at your iOS project.
 ## Example
 #### Fastfile example
 
-```
+```ruby
 import_from_git(
   url: "https://github.com/Qase/BuildingTemplates-iOS.git", # The URL of the repository to import the Fastfile from.
   branch: "HEAD", # The branch to checkout on the repository
@@ -66,7 +66,7 @@ import_from_git(
 ```
 
 #### .env.default example
-```
+```ruby
 #General
 TEAM_ID = "123456789"
 APP_IDENTIFIER = "com.quanti.swift.myappidentifier"
