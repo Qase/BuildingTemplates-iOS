@@ -64,6 +64,66 @@ platform :ios do
   end
 
   # -------------------------
+  # Git
+  # -------------------------
+  lane :setup_git_hooks do |options|
+  	script = %{#!/bin/bash
+
+# regex to validate in commit msg
+commit_text=`cat $1`
+current_branch=`git rev-parse --abbrev-ref HEAD`
+
+#branch_regex="(.*?)\\/(.*)"
+branch_regex="([^,\\/]*)/(.*)"
+
+if [[ $current_branch =~ $branch_regex ]] 
+then
+  branch_prefix="${BASH_REMATCH[1]}"
+  branch_name="${BASH_REMATCH[2]}"
+
+  #echo "Branch: Prefix: $branch_prefix Name: $branch_name"
+
+  commit_regex="([^,:,\\ ]{2,10}(\\:\\ *))?(\\([^,\\ ]*\\)|$branch_name)?(\\ *)?(.*)"
+
+  if [[ $commit_text =~ $commit_regex ]] 
+  then
+    commit_prefix="${BASH_REMATCH[1]}"
+    commit_name="${BASH_REMATCH[3]}"
+    commit_message="${BASH_REMATCH[5]}"
+    #echo "Commit: Prefix: $commit_prefix Name: $commit_name Message: $commit_message"
+  else 
+    commit_message="$commit_text"
+    #echo "Nope"
+  fi
+
+  if [[ $commit_prefix == "" ]]
+  then
+    prefix="$branch_prefix"
+  else 
+    prefix="${commit_prefix//:}"
+    prefix="${prefix// }"
+  fi
+
+  if [[ $commit_prefix == "" || $commit_name == "" ]] 
+  then
+    #echo "Repairing commit"
+    commit_text="$prefix: ($branch_name) $commit_message"
+  fi
+
+  echo "$commit_text" > $1
+fi
+}
+  	hook_path = "../.git/hooks/commit-msg"
+  	File.open(hook_path, 'w') { |file| file.write(script) }
+  	sh("chmod +x " + hook_path)
+  end
+
+  lane :cancel_git_hooks do |options|
+  	hook_path = "../.git/hooks/commit-msg"
+    sh("rm " + hook_path)
+  end
+
+  # -------------------------
   # Version control
   # -------------------------
   desc "Clean all files before build (deletes derived data)"
