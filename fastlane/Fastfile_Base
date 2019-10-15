@@ -126,8 +126,8 @@ fi
   # -------------------------
   # Version control
   # -------------------------
-  desc "Clean all files before build (deletes derived data)"
-  lane :version_set do |options|
+
+  private_lane :version do |options|
     branch = git_branch()
     if ['master', 'dev', 'develop'].include? branch.downcase
       branch = ""
@@ -139,6 +139,13 @@ fi
     if branch != ""
       build_number += "(#{branch})"
     end
+
+    build_number
+  end
+
+  desc "Clean all files before build (deletes derived data)"
+  lane :version_set do |options|
+    build_number = version()
     increment_build_number_in_plist(build_number: "#{build_number}")
   end
 
