@@ -353,6 +353,17 @@ fi
 
   end
 
+  lane :deploy_firebase do
+    if ENV["SUPRESS_DEPLOY"]
+      next
+    end
+    
+    firebase_app_distribution(
+      firebase_cli_token: ENV["FIREBASEAPPDISTRO_CUST_CLI_TOKEN"]
+    )
+
+  end
+
   desc "Deploy application to pilot"
   lane :deploy_pilot do
     if ENV["SUPRESS_DEPLOY"]
@@ -423,22 +434,24 @@ fi
 
   desc "CI - Build and upload to crashlytics"
   lane :ci_crashlytics do
-    #certificates(scheme: "adhoc")
-    refresh_profiles(readonly:true)
     build(scheme: "adhoc")
     deploy_crashlytics()
   end
 
+  desc "CI - Build and upload to crashlytics"
+  lane :ci_firebase do
+    build(scheme: "adhoc")
+    deploy_firebase()
+  end
+
   desc "CI - Build and upload to testflight"
   lane :ci_testflight do
-    #certificates(scheme: "appstore")
     build(scheme: "appstore")
     deploy_pilot()
   end
 
   desc "CI - Build and upload to testflight"
   lane :ci_appstore do
-    #certificates(scheme: "appstore")
     build(scheme: "appstore")
     deploy_appstore()
   end
