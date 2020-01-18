@@ -434,24 +434,28 @@ fi
 
   desc "CI - Build and upload to crashlytics"
   lane :ci_crashlytics do
+    version_set()
     build(scheme: "adhoc")
     deploy_crashlytics()
   end
 
   desc "CI - Build and upload to crashlytics"
   lane :ci_firebase do
+    version_set()
     build(scheme: "adhoc")
     deploy_firebase()
   end
 
   desc "CI - Build and upload to testflight"
   lane :ci_testflight do
+    version_set()
     build(scheme: "appstore")
     deploy_pilot()
   end
 
   desc "CI - Build and upload to testflight"
   lane :ci_appstore do
+    version_set()
     build(scheme: "appstore")
     deploy_appstore()
   end
