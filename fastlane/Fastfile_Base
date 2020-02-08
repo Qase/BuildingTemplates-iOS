@@ -361,7 +361,7 @@ fi
     change_log = %x[git log -3  --pretty=format:"%h %s" | cat]
     firebase_app_distribution(
       firebase_cli_token: ENV["FIREBASEAPPDISTRO_CUST_CLI_TOKEN"],
-      release_notes: changelog,
+      release_notes: change_log,
     )
 
   end
