@@ -464,7 +464,7 @@ fi
 
   desc "CI nightbuild"
   lane :ci_nightbuild do
-    ci_crashlytics()
+    ci_firebase()
   end
 
 
