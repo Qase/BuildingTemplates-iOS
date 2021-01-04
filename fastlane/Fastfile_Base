@@ -473,10 +473,10 @@ fi
   # -------------------------
   error do |lane, exception, options|
     if is_ci?
-      slack(
-        message: exception.message,
-        success: false
-      )
+      #slack(
+      #  message: exception.message,
+      #  success: false
+      #)
     else
       UI.important "Error(x): #{exception.message}"      
     end
