@@ -201,14 +201,16 @@ fi
   # -------------------------
   desc "Prints information (like version ...) about project"
   lane :info do |options|
-    version = get_info_plist_value(key: "CFBundleShortVersionString")
+  	xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
+    version = sh("xcodebuild -showBuildSettings -project \"../#{xcodeproj_path}\" | grep MARKETING_VERSION | tr -d \"MARKETING_VERSION =\"")
     version_bundle = get_info_plist_value(key: "CFBundleVersion")
     commits = number_of_commits()
     dir  = sh("pwd")
   
+  	puts "\n"
     UI.important "Project Data:"
-    puts "Building dir:  \t #{dir}"
-    puts "App version:   \t #{version}"
+    puts "Building dir:  \t #{dir.strip}"
+    puts "App version:   \t #{version.strip}"
     puts "Bundle version:\t #{version_bundle}"
     puts "Commits:       \t #{commits}"
   end
