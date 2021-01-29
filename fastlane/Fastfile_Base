@@ -202,7 +202,9 @@ fi
   desc "Prints information (like version ...) about project"
   lane :info do |options|
   	xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
-  	if !xcodeproj_path
+  	if xcodeproj_path
+      xcodeproj_path = "../#{xcodeproj_path}"
+    else
   		xcodeproj_path = sh("find \"..\" -maxdepth 1 -name \"*.xcodeproj\" | head -n 1 ").strip
   		puts "Detected xcodeproj_path:  \t #{xcodeproj_path}"
   	end
