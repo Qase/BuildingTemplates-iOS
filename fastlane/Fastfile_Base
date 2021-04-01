@@ -16,7 +16,7 @@ require 'dotenv/load'
 
 # This is the minimum version number required.
 # Update this, if you use features of a newer version
-fastlane_version "2.100.0"
+fastlane_version "2.178.0"
 default_platform :ios
 # If you want to automatically update fastlane if a new version is available:
 # update_fastlane
@@ -67,7 +67,7 @@ platform :ios do
   # Git
   # -------------------------
   lane :setup_git_hooks do |options|
-  	script = %{#!/bin/bash
+    script = %{#!/bin/bash
 
 # regex to validate in commit msg
 commit_text=`cat $1`
@@ -113,13 +113,13 @@ then
   echo "$commit_text" > $1
 fi
 }
-  	hook_path = "../.git/hooks/commit-msg"
-  	File.open(hook_path, 'w') { |file| file.write(script) }
-  	sh("chmod +x " + hook_path)
+    hook_path = "../.git/hooks/commit-msg"
+    File.open(hook_path, 'w') { |file| file.write(script) }
+    sh("chmod +x " + hook_path)
   end
 
   lane :cancel_git_hooks do |options|
-  	hook_path = "../.git/hooks/commit-msg"
+    hook_path = "../.git/hooks/commit-msg"
     sh("rm " + hook_path)
   end
 
@@ -178,6 +178,7 @@ fi
 
   desc "Update certificates (readonly): scheme:{development, appstore, adhoc}"
   lane :certificates do |options|
+    get_appstore_api_key()
     match(
         type: options[:scheme],
         verbose: false,
@@ -187,6 +188,7 @@ fi
 
   desc "Update certificates for all schemes (development, appstore, adhoc)"
   lane :refresh_profiles do |options|
+    get_appstore_api_key()
     ["development", "adhoc", "appstore"].each do |type|
       match(
         type: type,
@@ -201,19 +203,19 @@ fi
   # -------------------------
   desc "Prints information (like version ...) about project"
   lane :info do |options|
-  	xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
-  	if xcodeproj_path
+    xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
+    if xcodeproj_path
       xcodeproj_path = "../#{xcodeproj_path}"
     else
-  		xcodeproj_path = sh("find \"..\" -maxdepth 1 -name \"*.xcodeproj\" | head -n 1 ").strip
-  		puts "Detected xcodeproj_path:  \t #{xcodeproj_path}"
-  	end
+      xcodeproj_path = sh("find \"..\" -maxdepth 1 -name \"*.xcodeproj\" | head -n 1 ").strip
+      puts "Detected xcodeproj_path:  \t #{xcodeproj_path}"
+    end
     version = sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" | grep MARKETING_VERSION | tr -d \"MARKETING_VERSION =\"")
     version_bundle = get_info_plist_value(key: "CFBundleVersion")
     commits = number_of_commits()
     dir  = sh("pwd")
   
-  	puts "\n"
+    puts "\n"
     UI.important "Project Data:"
     puts "Building dir:  \t #{dir.strip}"
     puts "App version:   \t #{version.strip}"
@@ -289,6 +291,16 @@ fi
   # -------------------------
   # Deploying
   # -------------------------
+
+  desc "Setup Apple Two-factor Auth"
+  lane :get_appstore_api_key do |options|
+    if ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"]
+    app_store_connect_api_key(
+      duration: 1200, # optional (maximum 1200)
+      in_house: false, # optional but may be required if using match/sigh
+    )
+    end
+  end
   
   desc "Setup Apple Two-factor Auth"
   lane :setup_apple_login do |options|
@@ -374,11 +386,13 @@ fi
 
   end
 
-  desc "Deploy application to pilot"
+  desc "Deploy application to testflight"
   lane :deploy_pilot do
     if ENV["SUPRESS_DEPLOY"]
       next
     end
+
+    get_appstore_api_key()
 
     pilot(
       distribute_external: true,
@@ -393,6 +407,8 @@ fi
     if ENV["SUPRESS_DEPLOY"]
       next
     end
+
+    get_appstore_api_key()
 
     deliver(
       verbose: true,
