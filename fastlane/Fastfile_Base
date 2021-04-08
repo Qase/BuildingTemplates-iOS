@@ -55,6 +55,9 @@ platform :ios do
   lane :register do  |options|
       device_name = prompt(text: "Enter the device name: ")
       device_udid = prompt(text: "Enter the device UDID: ")
+    
+      get_appstore_api_key()
+
       device_hash = {}
       device_hash[device_name] = device_udid
       register_devices(devices: device_hash)
