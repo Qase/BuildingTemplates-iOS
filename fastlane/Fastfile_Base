@@ -32,10 +32,6 @@ platform :ios do
   # -------------------------
 
   before_all do
-    if is_ci?
-    #   unlock_keychain
-      version_set()
-    end
     unlock_default_keychain()
     if ENV["AUTO_REFRESH_PROFILE"]
       refresh_profiles(readonly:true)
@@ -206,6 +202,7 @@ fi
   # -------------------------
   desc "Prints information (like version ...) about project"
   lane :info do |options|
+    version_set()
     xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
     if xcodeproj_path
       xcodeproj_path = "../#{xcodeproj_path}"
