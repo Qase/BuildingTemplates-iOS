@@ -128,17 +128,24 @@ fi
 
   private_lane :version do |options|
     branch = git_branch()
-    if ['master', 'dev', 'develop'].include? branch.downcase
+    if ['master', 'main', 'hotfix', 'dev', 'develop'].include? branch.downcase
       branch = ""
     elsif branch.downcase.include? "release"
       branch = ""
     end
+
+    
+    number_of_commits_var = number_of_commits()
+
+    unless ENV["NUMBER_OF_COMMITS_MODDIFIER"].nil?
+      number_of_commits_var = number_of_commits_var + Integer(ENV["NUMBER_OF_COMMITS_MODDIFIER"])
+    end
       
-    build_number = "#{number_of_commits()}"
+    build_number = "#{number_of_commits_var}"
     if branch != ""
       build_number += "(#{branch})"
     end
-
+    puts build_number
     build_number
   end
 
