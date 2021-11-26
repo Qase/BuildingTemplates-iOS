@@ -42,9 +42,15 @@ platform :ios do
   # General
   # -------------------------
 
-  desc "Clean all files before build (deletes derived data)"
+  desc "Cleans derived data"
   lane :clean do
     clear_derived_data
+  end
+
+  desc "Clean All (clean derived data and resets simulators)"
+  lane :clean_all do
+    clear_derived_data
+    reset_simulator_contents 
   end
 
   desc "Register new development device to provisioning profile (prompts name and UUID)"
