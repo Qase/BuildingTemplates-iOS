@@ -65,6 +65,7 @@ platform :ios do
   # -------------------------
   # Git
   # -------------------------
+  desc "Automaticcaly detects and ensures correct commit message format"
   lane :setup_git_hooks do |options|
     script = %{#!/bin/bash
 
@@ -112,13 +113,16 @@ then
   echo "$commit_text" > $1
 fi
 }
-    hook_path = "../.git/hooks/commit-msg"
+    path = sh("git rev-parse --show-toplevel")
+    hook_path = path + "/.git/hooks/commit-msg"
     File.open(hook_path, 'w') { |file| file.write(script) }
     sh("chmod +x " + hook_path)
   end
 
+  desc "Automaticcaly detects and ensures correct commit message format"
   lane :cancel_git_hooks do |options|
-    hook_path = "../.git/hooks/commit-msg"
+    path = sh("git rev-parse --show-toplevel")
+    hook_path = path + "/.git/hooks/commit-msg"
     sh("rm " + hook_path)
   end
 
@@ -149,7 +153,7 @@ fi
     build_number
   end
 
-  desc "Clean all files before build (deletes derived data)"
+  desc "Sets project build number based on commits and branch"
   lane :version_set do |options|
     build_number = version()
     increment_build_number_in_plist(build_number: "#{build_number}")
@@ -182,8 +186,8 @@ fi
     )
   end
 
-  desc "Update certificates (readonly): scheme:{development, appstore, adhoc}"
-  lane :certificates do |options|
+  desc "Update single certificate (readonly): scheme:{development, appstore, adhoc}"
+  lane :certificate do |options|
     get_appstore_api_key()
     match(
         type: options[:scheme],
@@ -191,6 +195,13 @@ fi
         readonly: true
       )
   end
+
+    desc "Alias to refresh_profiles"
+    lane :certificates do |options|
+        refresh_profiles()
+    end
+
+
 
   desc "Update certificates for all schemes (development, appstore, adhoc)"
   lane :refresh_profiles do |options|
@@ -336,8 +347,6 @@ fi
     end
 
     tokenString = output.join("\n").match(/Pass the following via the FASTLANE_SESSION environment variable:\n(^.*)/i).captures.join('###').gsub('[4m[36m', '').gsub('[0m[0m', '')
-    #puts "XXXX"+tokenString + "YYYY"
-    #puts "DIR: " + `pwd`
 
     file_name = ".env.default"
     text = File.read(file_name)
@@ -361,10 +370,6 @@ fi
       end
     end
 
-    #puts `fastlane spaceauth -u david2xn@gmail.com`
-    #tokenString = sh("fastlane spaceauth -u "+ENV["MATCH_USERNAME"]).match(/Pass the following via the FASTLANE_SESSION environment variable:\n(^.*)/i).captures.join('###')
-    #beforeStringLine = 'ENV["FASYLANE_SESSION"] = \''+ tokenString + '\''
-    #puts "XXXX"+tokenString + "YYYY"
   end
   
   desc "Deploy application to crashlytics"
