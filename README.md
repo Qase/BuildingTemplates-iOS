@@ -67,6 +67,7 @@ fastlane register #(Optionally for registering new device to developer portal)
 | XCODE_PROVISIONING_PROD  | String | Name of production scheme - default is `"match AppStore "+ ENV["APP_IDENTIFIER"]` |
 | SUPRESS_DEPLOY           | Bool   | Debug function - if true, then skip all publishing lanes                          |
 | APP_NAME_SHORT           | String | Your own name of application                                                      |
+| CLEAN_CI_BEFORE_BUILD    | Bool   | Should CI be cleaned before each build (by default set to false)                  |
 
 ## Examples
 For most projects simply importing Building Template is sufficient
@@ -194,7 +195,7 @@ Developers must have access to Git repository at MATCH_GIT_URL. Try Checking out
 Open Keychain Access and Delete all Developer Certificates that are not included in Provisioning profile
 
 ### ERROR: Profile doesn't include device ...
-Run command `fastlane register` and follow instruction to register your device to Developer Portal. (Or manually on )
+Run command `fastlane register` and follow instruction to register your device to Developer Portal. (Or manually on Apple Connect)
 
 ### Fastlane command not found
 Install fastlane: https://docs.fastlane.tools/getting-started/ios/setup/

@@ -47,7 +47,7 @@ platform :ios do
     clear_derived_data
   end
 
-  desc "Clean All (clean derived data and resets simulators)"
+  desc "Clean All (clean derived data and reset simulators)"
   lane :clean_all do
     clear_derived_data
     reset_simulator_contents 
@@ -264,7 +264,7 @@ fi
   #Override this lane if needed (In case entire build action needs to be changed)
   private_lane :custom_gym do |options|
 
-    if is_ci?
+    if is_ci? && ENV["CLEAN_CI_BEFORE_BUILD"]
       clean()
     end
     provisioningProfiles = get_provisioning_profiles(options)
