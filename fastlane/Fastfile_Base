@@ -119,15 +119,15 @@ then
   echo "$commit_text" > $1
 fi
 }
-    path = sh("git rev-parse --show-toplevel")
+    path = sh("git rev-parse --show-toplevel").strip
     hook_path = path + "/.git/hooks/commit-msg"
-    File.open(hook_path, 'w') { |file| file.write(script) }
+    File.open(hook_path, 'w+') { |file| file.write(script) }
     sh("chmod +x " + hook_path)
   end
 
   desc "Automaticcaly detects and ensures correct commit message format"
   lane :cancel_git_hooks do |options|
-    path = sh("git rev-parse --show-toplevel")
+    path = sh("git rev-parse --show-toplevel").strip
     hook_path = path + "/.git/hooks/commit-msg"
     sh("rm " + hook_path)
   end
