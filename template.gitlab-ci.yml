@@ -1,0 +1,87 @@
+app_info_job:
+  stage: info
+  script:
+    - fastlane info
+
+
+app_snapshot_job:
+  stage: misc
+  script:
+    - fastlane snapshot
+  artifacts:
+    when: always
+    paths:
+    - screenshots
+  when: manual
+
+app_build_job:
+  stage: build
+  script:
+    - fastlane build
+
+app_test_job:
+  stage: test
+  script:
+    - fastlane test
+  artifacts:
+    when: always
+    paths:
+    - ./fastlane/test_output 
+
+app_night_build:
+  stage: night_build
+  script:
+    - fastlane ci_nightbuild
+  only:
+    - schedules
+    - triggers
+  environment:
+    name: crashlytics
+  artifacts:
+    expire_in: 4 week
+    when: always
+    paths:
+    - ./build/*
+
+app_firebase_job:
+  stage: deploy
+  script:
+    - fastlane ci_firebase
+  when: manual
+  environment:
+    name: firebase
+  artifacts:
+    expire_in: 4 week
+    when: always
+    paths:
+    - ./build/*
+    
+app_certificates_job:
+  stage: info
+  script:
+    - fastlane refresh_profiles
+  when: manual
+    
+app_testflight_job:
+  stage: deploy
+  script:
+    - fastlane ci_testflight
+  when: manual
+  only:
+    - /^[release|hotfix].*/
+  environment:
+    name: testflight
+
+app_appstore_job:
+  stage: deploy
+  script:
+    - fastlane ci_appstore
+  when: manual
+  artifacts:
+    when: always
+    paths:
+    - ./build/*
+  only:
+    - /^[release|hotfix].*/
+  environment:
+    name: appstore
