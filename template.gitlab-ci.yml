@@ -1,3 +1,32 @@
+default:
+  tags:
+    - xcode14.0
+
+variables:
+  LC_ALL: "en_US.UTF-8"
+  LANG: "en_US.UTF-8"
+  GIT_SUBMODULE_STRATEGY: recursive
+
+before_script:
+  - "~/unlock_ci_keychain.sh"
+
+stages:
+  - info
+  - build
+  - lint
+  - test
+  - deploy
+  - misc
+  - night_build
+
+####################### General #######################
+clean_ci:
+  stage: info
+  script:
+    - fastlane clean_all
+  when: manual
+
+####################### App #######################
 app_info_job:
   stage: info
   script:
