@@ -234,7 +234,7 @@ fi
       xcodeproj_path = sh("find \"..\" -maxdepth 1 -name \"*.xcodeproj\" | head -n 1 ").strip
       puts "Detected xcodeproj_path:  \t #{xcodeproj_path}"
     end
-    version = sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" | grep MARKETING_VERSION | tr -d \"MARKETING_VERSION =\"")
+    version = sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" 2>/dev/null | grep MARKETING_VERSION | tr -d \"MARKETING_VERSION =\"")
     version_bundle = get_info_plist_value(key: "CFBundleVersion")
     commits = number_of_commits()
     dir  = sh("pwd")
