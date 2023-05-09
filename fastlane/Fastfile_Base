@@ -224,6 +224,7 @@ fi
   # -------------------------
   # Informational
   # -------------------------
+
   desc "Prints information (like version ...) about project"
   lane :info do |options|
     version_set()
@@ -509,10 +510,10 @@ fi
     ci_firebase()
   end
 
-
   # -------------------------
   # Error callback
   # -------------------------
+
   error do |lane, exception, options|
     if is_ci?
       #slack(
@@ -523,6 +524,44 @@ fi
       UI.important "Error(x): #{exception.message}"      
     end
 
+  end
+
+  # -------------------------
+  # SwiftGen
+  # -------------------------
+
+  desc "Download swiftgen folder wtih config file and templates"
+  lane :setup_swiftgen do
+    sh <<-SCRIPT
+      curl -L -O https://github.com/Qase/swiftgen-templates/archive/main.zip
+      unzip main.zip
+      rm main.zip
+    
+      mv swiftgen-templates-main/swiftgen ../swiftgen
+      rm -rf swiftgen-templates-main
+    SCRIPT
+  end
+
+  desc "Download swiftgen folder wtih config file and templates"
+  lane :update_swiftgen_templates do
+    sh <<-SCRIPT
+      curl -L -O https://github.com/Qase/swiftgen-templates/archive/main.zip
+      unzip main.zip
+      rm main.zip
+
+      cd swiftgen-templates-main/swiftgen
+
+      # Iterate through all templates and copy them in the swiftgen folder without the template config file
+      # Note: command cd should be in the one call of "sh" because the next "sh" call starts in the root folder
+      for FILE in *; do 
+        if [ \"$FILE\" != 'swiftgen.yml' ]; then 
+          cp $FILE ../../../swiftgen/$FILE
+          echo $FILE 'UPDATED'
+        fi
+      done
+
+      rm -rf swiftgen-templates-main
+    SCRIPT
   end
   
 end
