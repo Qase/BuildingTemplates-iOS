@@ -533,34 +533,65 @@ fi
   desc "Download swiftgen folder wtih config file and templates"
   lane :setup_swiftgen do
     sh <<-SCRIPT
-      curl -L -O https://github.com/Qase/swiftgen-templates/archive/main.zip
-      unzip main.zip
-      rm main.zip
+      # Check if in the project folder
+      if [ ! -d 'fastlane' ]; then
+        cd ..
+      fi
+
+      # Check if the SwiftGen folder is already setup
+      if [ -d 'swiftgen' ]; then
+        exit 0
+      fi
+
+      # Check if the swiftgen templates folder are already downloaded
+      if [ ! -d 'swiftgen-templates-main' ]; then
+        echo "\nDownloading SwiftGen templates ..."
+        curl -L -O https://github.com/Qase/swiftgen-templates/archive/main.zip
+        unzip main.zip
+        rm main.zip
+      fi
     
-      mv swiftgen-templates-main/swiftgen ../swiftgen
-      rm -rf swiftgen-templates-main
+      mv swiftgen-templates-main/swiftgen swiftgen
+      rm -r swiftgen-templates-main
     SCRIPT
   end
 
   desc "Download swiftgen folder wtih config file and templates"
   lane :update_swiftgen_templates do
     sh <<-SCRIPT
-      curl -L -O https://github.com/Qase/swiftgen-templates/archive/main.zip
-      unzip main.zip
-      rm main.zip
+      # Check if is it in the project folder
+      if [ ! -d 'fastlane' ]; then
+        cd ..
+      fi
+
+      # Check if the SwiftGen folder is already setup
+      if [ ! -d 'swiftgen' ]; then
+        echo "SwiftGen folder isn't setup\n Run 'fastlane setup_swiftgen'"
+        exit 1
+      fi
+
+      # Check if the swiftgen templates folder are already downloaded
+      if [ ! -d 'swiftgen-templates-main' ]; then
+        echo "\nDownloading SwiftGen templates ..."
+        curl -L -O https://github.com/Qase/swiftgen-templates/archive/main.zip
+        unzip main.zip
+        rm main.zip
+      fi
 
       cd swiftgen-templates-main/swiftgen
 
       # Iterate through all templates and copy them in the swiftgen folder without the template config file
       # Note: command cd should be in the one call of "sh" because the next "sh" call starts in the root folder
+      
+      echo "\nUpdating SwiftGen templates:"
       for FILE in *; do 
         if [ \"$FILE\" != 'swiftgen.yml' ]; then 
-          cp $FILE ../../../swiftgen/$FILE
+          cp $FILE ../../swiftgen/$FILE
           echo $FILE 'UPDATED'
         fi
       done
 
-      rm -rf swiftgen-templates-main
+      rm -r ../../swiftgen-templates-main
     SCRIPT
   end
   
