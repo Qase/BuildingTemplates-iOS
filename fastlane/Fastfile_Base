@@ -384,19 +384,6 @@ fi
 
   end
   
-  desc "Deploy application to crashlytics"
-  lane :deploy_crashlytics do |options|
-    if ENV["SUPRESS_DEPLOY"]
-      next
-    end
-
-    crashlytics(
-      notes: "Application succesfully uploaded to crashlytics \n" + %x[git log --oneline --since `date -v -1d +%d.%m.%Y`]
-    )
-    post_deploy_to_slack(place: "Crashlytics")
-
-  end
-
   lane :deploy_firebase do
     if ENV["SUPRESS_DEPLOY"]
       next
@@ -422,8 +409,6 @@ fi
       distribute_external: true,
       verbose: true,
     )
-    post_deploy_to_slack(place:"Apple Testflight")
-    
   end
 
   desc "Deploy application to appstore"
@@ -439,8 +424,6 @@ fi
       skip_metadata: true,
       skip_screenshots: true,
     )
-    post_deploy_to_slack(place:"App Store")
-
   end
 
   desc "Release app (runs deploy_appstore)"
@@ -465,17 +448,6 @@ fi
   desc "Run UI test and create snapshots (saves images o google drive)"
   lane :snapshots do
     snapshot
-  end
-
-  desc "Post to 2N slack into app_monitoring channel"
-  lane :post_deploy_to_slack  do |options|
-    version = get_info_plist_value(key: "CFBundleShortVersionString")
-    version_bundle = get_info_plist_value(key: "CFBundleVersion")
-    short_name = ENV["APP_NAME_SHORT"]
-    place=options[:place]
-    slack(
-      message: "#{short_name}: New iOS #{version} (#{version_bundle}) has been uploaded to #{place}",
-    )
   end
 
   # -------------------------
