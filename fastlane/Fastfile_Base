@@ -232,17 +232,21 @@ fi
     get_info_plist_value(key: "CFBundleVersion")
   end
 
+  private_lane :project_version do |options|
+      xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
+      if xcodeproj_path
+        xcodeproj_path = "../#{xcodeproj_path}"
+      else
+        xcodeproj_path = sh("find \"..\" -maxdepth 1 -name \"*.xcodeproj\" | head -n 1 ").strip
+        puts "Detected xcodeproj_path:  \t #{xcodeproj_path}"
+      end
+      sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" 2>/dev/null | grep MARKETING_VERSION | tr -d \"MARKETING_VERSION =\"")
+  end
+
   desc "Prints information (like version ...) about project"
   lane :info do |options|
     version_set()
-    xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
-    if xcodeproj_path
-      xcodeproj_path = "../#{xcodeproj_path}"
-    else
-      xcodeproj_path = sh("find \"..\" -maxdepth 1 -name \"*.xcodeproj\" | head -n 1 ").strip
-      puts "Detected xcodeproj_path:  \t #{xcodeproj_path}"
-    end
-    version = sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" 2>/dev/null | grep MARKETING_VERSION | tr -d \"MARKETING_VERSION =\"")
+    version = project_version()
     version_bundle = project_build_number()
     commits = number_of_commits()
     dir  = sh("pwd")
