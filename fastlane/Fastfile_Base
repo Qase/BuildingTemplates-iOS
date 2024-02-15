@@ -68,6 +68,19 @@ platform :ios do
       end
   end
 
+  desc "Register all devices from url defined in FL_VERSION_NUMBER_PROJECT"
+  lane :register_all do  |options|
+    downloadSheetUrl = ENV["FL_DEVICES_URL"]
+    devicesPath = "./fastlane/devices.txt"
+    sh("cd .. && curl -L '#{downloadSheetUrl}' --output #{devicesPath}")
+
+    get_appstore_api_key()
+    register_devices(devices_file: devicesPath)
+    if !options[:norefresh]
+      refresh_profiles
+    end
+  end
+
   # -------------------------
   # Git
   # -------------------------
