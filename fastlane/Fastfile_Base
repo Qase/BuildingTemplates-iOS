@@ -227,9 +227,19 @@ fi
   # Informational
   # -------------------------
 
-  private_lane :is_info_plist_generated do |options|
+  private_lane :get_xcode_project_path do |options|
     xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
-    xcodeproj_path = "../#{xcodeproj_path}"
+    if xcodeproj_path
+      xcodeproj_path = "../#{xcodeproj_path}"
+    else
+      xcodeproj_path = sh("find \"..\" -maxdepth 1 -name \"*.xcodeproj\" | head -n 1 ").strip
+      puts "Detected xcodeproj_path:  \t #{xcodeproj_path}"
+    end
+    xcodeproj_path
+  end
+
+  private_lane :is_info_plist_generated do |options|
+    xcodeproj_path = get_xcode_project_path()
     result = sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" 2>/dev/null | grep \" GENERATE_INFOPLIST_FILE\" | tr -d ' ' | sed 's/^GENERATE_INFOPLIST_FILE=//'").strip
     puts "App is info plist generated:   \t #{result.strip}"
     result == "YES"
@@ -241,20 +251,14 @@ fi
     if is_info_plist_generated
       sh("cd .. && agvtool what-version | tail -n +2").strip.gsub('"', '')
     else
-      get_info_plist_value(key: "CFBundleVersion")
+      get_info_plist_value(key: "CFBundleVersion").strip.gsub('"', '')
     end
   end
 
   private_lane :project_version do |options|
     is_info_plist_generated = is_info_plist_generated()
     if is_info_plist_generated
-      xcodeproj_path = ENV["FL_VERSION_NUMBER_PROJECT"]
-      if xcodeproj_path
-        xcodeproj_path = "../#{xcodeproj_path}"
-      else
-        xcodeproj_path = sh("find \"..\" -maxdepth 1 -name \"*.xcodeproj\" | head -n 1 ").strip
-        puts "Detected xcodeproj_path:  \t #{xcodeproj_path}"
-      end
+      xcodeproj_path = get_xcode_project_path()
       sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" 2>/dev/null | grep MARKETING_VERSION | tr -d \"MARKETING_VERSION =\"")
     else
       get_info_plist_value(key: "CFBundleShortVersionString")
