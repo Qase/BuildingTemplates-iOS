@@ -68,7 +68,7 @@ platform :ios do
       end
   end
 
-  desc "Register all devices from url defined in FL_VERSION_NUMBER_PROJECT"
+  desc "Register all devices from url defined in FL_DEVICES_URL"
   lane :register_all do  |options|
     downloadSheetUrl = ENV["FL_DEVICES_URL"]
     devicesPath = "./fastlane/devices.txt"
