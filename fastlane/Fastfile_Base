@@ -255,7 +255,7 @@ fi
     xcodeproj_path = get_xcode_project_path()
     result = sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" 2>/dev/null | grep \" GENERATE_INFOPLIST_FILE\" | tr -d ' ' | sed 's/^GENERATE_INFOPLIST_FILE=//'").strip
     puts "App is info plist generated:   \t #{result.strip}"
-    result == "YES"
+    true
   end
 
   # Override this lane if needed (Getting privisioning profiles)
