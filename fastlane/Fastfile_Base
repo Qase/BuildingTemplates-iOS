@@ -253,7 +253,7 @@ fi
 
   private_lane :is_info_plist_path_defined do |options|
     info_plist_path = ENV["FL_GET_INFO_PLIST_PATH"]
-    info_plist_path.empty? == false
+    info_plist_path && info_plist_path.empty? == false
   end
 
   # Override this lane if needed (Getting privisioning profiles)
