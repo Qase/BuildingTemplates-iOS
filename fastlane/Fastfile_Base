@@ -251,29 +251,13 @@ fi
     xcodeproj_path
   end
 
-  private_lane :is_info_plist_path_defined do |options|
-    info_plist_path = ENV["FL_GET_INFO_PLIST_PATH"]
-    info_plist_path && info_plist_path.empty? == false
-  end
-
   # Override this lane if needed (Getting privisioning profiles)
   private_lane :project_build_number do |options|
-    is_info_plist_path_defined = is_info_plist_path_defined()
-    if is_info_plist_path_defined
-      get_info_plist_value(key: "CFBundleVersion").strip.gsub('"', '')
-    else
-      sh("cd .. && agvtool what-version | tail -n +2").strip.gsub('"', '')
-    end
+    get_build_number().strip.gsub('"', '')
   end
 
   private_lane :project_version do |options|
-    is_info_plist_path_defined = is_info_plist_path_defined()
-    if is_info_plist_path_defined
-      get_info_plist_value(key: "CFBundleShortVersionString")
-    else
-      xcodeproj_path = get_xcode_project_path()
-      sh("xcodebuild -showBuildSettings -project \"#{xcodeproj_path}\" 2>/dev/null | grep MARKETING_VERSION | tr -d \"MARKETING_VERSION =\"")
-    end
+    get_version_number()
   end
 
   desc "Prints information (like version ...) about project"
