@@ -460,7 +460,9 @@ fi
 
   desc "Run swiftlint"
   lane :lint do
-    swiftlint
+    swiftlint(
+      strict: true
+    )
   end
 
   desc "Run all tests (scan command). UNIT and UI"
