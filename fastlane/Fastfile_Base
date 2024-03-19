@@ -177,7 +177,7 @@ fi
   desc "Sets project build number based on commits and branch"
   lane :version_set do |options|
     number_of_commits = version().gsub("/", "\\/")
-    sh("cd .. && agvtool new-version -all \"\\\"#{number_of_commits}\\\"\"")
+    sh("cd .. && agvtool new-version \"\\\"#{number_of_commits}\\\"\"")
   end
 
 
