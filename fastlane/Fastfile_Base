@@ -461,7 +461,8 @@ fi
   desc "Run swiftlint"
   lane :lint do
     swiftlint(
-      strict: true
+      strict: true,
+      quiet: true,
     )
   end
 
