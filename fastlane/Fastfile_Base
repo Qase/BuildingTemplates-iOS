@@ -498,7 +498,16 @@ fi
   lane :ci_testflight do
     version_set()
     build(scheme: "appstore")
+    fix_ipa_post_build()
     deploy_pilot()
+  end
+
+
+  private_lane :fix_ipa_post_build do
+    # Workaround to remove ._Symbols from ipa.
+    ipa_location = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    sh("unzip -l #{ipa_location} | grep ._Symbols || true")
+    sh("zip -d #{ipa_location} ._Symbols/ || true")
   end
 
   desc "CI - Build and upload to testflight"
