@@ -130,14 +130,13 @@ gem 'fastlane-plugin-firebase_app_distribution'
 #### .env.default example:
 ```ruby
 #General
-TEAM_ID = "123456789"
-APP_IDENTIFIER = "com.quanti.swift.myappidentifier"
-IPA = "myapp.ipa"
+TEAM_ID = "123456789" # https://developer.apple.com/account in Membership details section
+APP_IDENTIFIER = "com.quanti.swift.myappidentifier" # Xcode project -> Signing and Capabilities -> Bundle Identifier
+IPA = "MyApp" # Xcode project -> Build Settings -> Product name + ".ipa"
 BUILD_DIR = "./build"
-PLIST_PATH = "py-app/Info.plist"
+PLIST_PATH = "my-app/Info.plist"
 IPA_PATH = "${BUILD_DIR}/${IPA}"
-APP_NAME = "MyApp"
-APP_NAME_SHORT = "MA"
+APP_NAME = "MyApp" # App name (usually the same as IPA variable)
 XCODE_SCHEME = "My App"
 
 FASTLANE_ITC_TEAM_ID = "${TEAM_ID}"
@@ -161,8 +160,8 @@ SLACK_URL = "https://hooks.slack.com/services/123456789"
 
 #Match
 MATCH_APP_IDENTIFIER = ${APP_IDENTIFIER}
-MATCH_GIT_URL = "git@git.quanti.cz:git/fastlane-match-ios.git"
-MATCH_USERNAME = "username@quanti.cz"
+MATCH_GIT_URL = "git@git.quanti.cz:git/fastlane-match-ios.git" # Set correct git certificates repository
+MATCH_USERNAME = "username@quanti.cz" # Apple Developer account with admin priviledges
 # MATCH_APP_IDENTIFIER = ${APP_IDENTIFIER},${APP_IDENTIFIER_EXTENSION},${APP_IDENTIFIER_NOTIFICATION_EXTENSION} # Example for more identifiers
 #AUTO_REFRESH_PROFILE = true
 
@@ -170,8 +169,8 @@ MATCH_USERNAME = "username@quanti.cz"
 FIREBASEAPPDISTRO_GROUPS = "ios-testers"
 FIREBASEAPPDISTRO_RELEASE_NOTES = "Lots of amazing new features to test out! (CI build)"
 FIREBASEAPPDISTRO_IPA_PATH = "${IPA_PATH}"
-FIREBASEAPPDISTRO_APP = "1:xxxxxxxxx:ios:xxxxxxxxxxxxxxxxxxxxxxx"
-FIREBASEAPPDISTRO_CUST_CLI_TOKEN = "1//xxxxxxxxxxxxxxxxxxxxxxxxx"
+FIREBASEAPPDISTRO_APP = "1:xxxxxxxxx:ios:xxxxxxxxxxxxxxxxxxxxxxx" # Firebase Console -> Project Settings -> General -> Apple Apps
+FIREBASEAPPDISTRO_CUST_CLI_TOKEN = "1//xxxxxxxxxxxxxxxxxxxxxxxxx" # Get firese token using firebase-cli tool: brew install firebase-cli
 
 #Gym
 GYM_OUTPUT_DIRECTORY = "${BUILD_DIR}"
@@ -180,13 +179,14 @@ GYM_CLEAN = true
 #Scan
 SCAN_SCHEME = "${XCODE_SCHEME}"
 
-#Pilot
+#Pilot/TestFlight
 PILOT_TEAM_ID = "${TEAM_ID}"
 PILOT_IPA = "${IPA_PATH}"
-PILOT_TESTER_FIRST_NAME = "First"
+PILOT_TESTER_FIRST_NAME = "First" 
 PILOT_TESTER_LAST_NAME = "Second"
 PILOT_TESTER_EMAIL = "ios@example.com"
 PILOT_CHANGELOG = "Test build for external testers"
+PILOT_GROUPS = "Testers" // AppStore Connect -> Your App -> TestFlight -> Testers (left panel)
 
 #Deliver
 DELIVER_TEAM_ID = "${TEAM_ID}"
