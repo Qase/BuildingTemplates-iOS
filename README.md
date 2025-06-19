@@ -13,6 +13,17 @@ Basic iOS templates to easily integrate and run Fastlane at your iOS project.
 * Project is constantly developed
 * Dependent on [DOTENV](https://docs.fastlane.tools/best-practices/keys/#dotenv)
 
+## Prerequisites
+- You have installed Fastlane, SwiftLint.
+`brew install fastlane`
+`brew install swiftlint`
+- You have access to the git certificates repository
+  - An SSH key (without encryption) is required for repository access.
+
+## Setup Guide
+ - Create `fastlane/FastFile` acording to template
+ - Copy Apple keys into `fastlane` folder
+ - Create `.env.default` acording to template and modify properties
 
 ## Usual flow for new developers on iOS project using this template
 Give developer access to repo `X` and repo set in `MATCH_GIT_URL`. And run following commands on developers Macbook:
