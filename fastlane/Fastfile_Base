@@ -318,14 +318,32 @@ fi
       clean()
     end
     provisioningProfiles = get_provisioning_profiles(options)
-    gym(
+    
+    # Base gym options
+    gym_options = {
       export_method: options[:xcode_export_method],
       scheme: options[:xcode_scheme],
       verbose: true,
       export_options: {
         provisioningProfiles: provisioningProfiles
       }
-    )
+    }
+    
+    # Apply development-only settings
+    if options[:xcode_export_method] == "development"
+      gym_options[:skip_codesigning] = true
+      gym_options[:skip_package_ipa] = true
+      gym_options[:skip_archive] = true
+      gym_options[:xcargs] = [
+        "COMPILER_INDEX_STORE_ENABLE=NO",
+        "DEBUG_INFORMATION_FORMAT=dwarf",
+        "RUN_CLANG_STATIC_ANALYZER=NO",
+        "SKIP_SWIFTLINT=YES",
+        "SKIP_CRASHLYTICS=YES"
+      ].join(" ")
+    end
+    
+    gym(gym_options)
   end
 
   desc "Build aplication scheme:{development, appstore, adhoc}"
